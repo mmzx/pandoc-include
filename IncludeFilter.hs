@@ -61,6 +61,9 @@ import           Text.Pandoc
 import           Text.Pandoc.Error
 import           Text.Pandoc.JSON
 
+import System.Environment
+import System.IO
+
 stripPandoc :: Either PandocError Pandoc -> [Block]
 stripPandoc p =
   case p of
@@ -72,7 +75,9 @@ ioReadMarkdown content = return $! readMarkdown def content
 
 getContent :: String -> IO [Block]
 getContent file = do
-  c <- readFile file
+  h <- openFile file ReadMode
+  hSetEncoding h latin1
+  c <- hGetContents h
   p <- ioReadMarkdown c
   return $! stripPandoc p
 
